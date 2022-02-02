@@ -30,23 +30,31 @@ int main(int argc, char** argv) {
 	}
 	else p = 0.5;
 	srand(static_cast<unsigned>(time(nullptr)));
+	unsigned char buffer = 0b00000000;
+	unsigned short cnt = 0;
+	out.write(reinterpret_cast<const char*>(&N), sizeof(N));
 	if (p < 1 && p > 0) {
-		for (long i = 0; i < N; ++i) {
+		for (long i = 0; i < N + 8; ++i) {
 			double r = round(((double)rand() / (RAND_MAX)) - 0.5 + p);
-			char bit;
-			r ? bit = 1 : bit = 0;
-			out.put(bit + 48);
+			cnt++;
+			if (r) {
+				buffer |= (1u << (8 - cnt));
+			}
+			if (cnt == 8) {
+				cnt = 0;
+				out.put(buffer);
+				buffer = 0b00000000;
+			}
 		}
 	}
 	else {
-		for (long i = 0; i < N; ++i) {
-			char bit;
-			p ? bit = 1 : bit = 0;
-			out.put(bit + 48);
+		p ? buffer = 0b11111111 : buffer = 0b00000000;
+		for (long i = 0; i < N / 8 + 1; ++i) {
+			out.put(buffer);
 		}
 	}
 	cout << N << " bits written to " << argv[1] << endl;
 	out.close();
-
+	
 	return 0;
 }
