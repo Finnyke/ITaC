@@ -4,6 +4,36 @@
 
 using namespace std;
 
+char* extractBitsToChar(const char* filename) {
+	ifstream in(filename, ios::binary);
+	if (!in.is_open()) {
+		cerr << "File " << filename << " could not have been opened" << endl;
+	}
+	cout << "Extracting bits... ";
+	long N = 0;
+	char num[4]{0};
+	in.read(num, 4 * sizeof(char));
+	N |= (static_cast<unsigned char>(num[3]) << 24);
+	N |= (static_cast<unsigned char>(num[2]) << 16);
+	N |= (static_cast<unsigned char>(num[1]) << 8);
+	N |= (static_cast<unsigned char>(num[0]) << 0);
+	char* bits = new char[N];
+	char* buffer = new char[N / 8 + 1];
+	long cnt = 0;
+	in.read(buffer, (N / 8 + 1) * sizeof(char));
+	for (long i = 0; i < N / 8 + 1; ++i) {
+		unsigned char c = static_cast<unsigned char>(buffer[i]);
+		for (long j = 0; j < 8; ++j) {
+			if (c & 0b10000000) bits[i * 8 + j] = '1';
+			else bits[i * 8 + j] = '0';
+			c = c << 1;
+		}
+	}
+	cout << N << " bits successfully extracted" << endl;
+	delete[] buffer;
+	return bits;
+}
+
 int main(int argc, char** argv) {
 	if (argc != 3 && argc != 4) {
 		cerr << "Invalid argument amount" << endl;
@@ -29,6 +59,7 @@ int main(int argc, char** argv) {
 		}
 	}
 	else p = 0.5;
+	cout << "Writing... ";
 	srand(static_cast<unsigned>(time(nullptr)));
 	unsigned char buffer = 0b00000000;
 	unsigned short cnt = 0;
@@ -38,7 +69,7 @@ int main(int argc, char** argv) {
 			double r = round(((double)rand() / (RAND_MAX)) - 0.5 + p);
 			cnt++;
 			if (r) {
-				buffer |= (1u << (8 - cnt));
+				buffer |= (1 << (8 - cnt));
 			}
 			if (cnt == 8) {
 				cnt = 0;
@@ -53,8 +84,8 @@ int main(int argc, char** argv) {
 			out.put(buffer);
 		}
 	}
-	cout << N << " bits written to " << argv[1] << endl;
+	cout << N << " bits successfully written to " << argv[1] << endl;
 	out.close();
-	
+
 	return 0;
 }
