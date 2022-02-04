@@ -4,7 +4,7 @@
 
 using namespace std;
 
-char* extractBitsToChar(const char* filename) {
+char* extractBitsToChar(long* amount, const char* filename) {
 	ifstream in(filename, ios::binary);
 	if (!in.is_open()) {
 		cerr << "File " << filename << " could not have been opened" << endl;
@@ -21,7 +21,7 @@ char* extractBitsToChar(const char* filename) {
 	char* buffer = new char[N / 8 + 1];
 	long cnt = 0;
 	in.read(buffer, (N / 8 + 1) * sizeof(char));
-	for (long i = 0; i < N / 8 + 1; ++i) {
+	for (long i = 0; i < N / 8; ++i) {
 		unsigned char c = static_cast<unsigned char>(buffer[i]);
 		for (long j = 0; j < 8; ++j) {
 			if (c & 0b10000000) bits[i * 8 + j] = '1';
@@ -29,8 +29,15 @@ char* extractBitsToChar(const char* filename) {
 			c = c << 1;
 		}
 	}
+	unsigned char c = static_cast<unsigned char>(buffer[N / 8]);
+	for (long j = 0; j < N % 8; ++j) {
+		if (c & 0b10000000) bits[N - N % 8 + j] = '1';
+		else bits[N - N % 8 + j] = '0';
+		c = c << 1;
+	}
 	cout << N << " bits successfully extracted" << endl;
 	delete[] buffer;
+	if (amount) *amount = N;
 	return bits;
 }
 
@@ -67,10 +74,8 @@ int main(int argc, char** argv) {
 	if (p < 1 && p > 0) {
 		for (long i = 0; i < N + 8; ++i) {
 			double r = round(((double)rand() / (RAND_MAX)) - 0.5 + p);
-			cnt++;
-			if (r) {
-				buffer |= (1 << (8 - cnt));
-			}
+			++cnt;
+			if (r) buffer |= (1 << (8 - cnt));
 			if (cnt == 8) {
 				cnt = 0;
 				out.put(buffer);
