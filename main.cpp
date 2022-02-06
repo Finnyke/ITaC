@@ -38,8 +38,9 @@ char* extractBitsToChar(long long* amount, const char* filename) {
 		c = c << 1;
 	}
 	cout << N << " bits successfully extracted" << endl;
-	delete[] buffer;
 	if (amount) *amount = N;
+	in.close();
+	delete[] buffer;
 	return bits;
 }
 
