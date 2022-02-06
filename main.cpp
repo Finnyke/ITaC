@@ -16,7 +16,7 @@ char* extractBitsToChar(long long* amount, const char* filename) {
 	for (int i = 7; i >= 0; --i) {
 		long long temp = 0;
 		temp |= static_cast<unsigned char>(num[i]);
-		temp = temp << i * 8;
+		temp <<= i * 8;
 		N |= temp;
 	}
 	char* bits = new char[N];
