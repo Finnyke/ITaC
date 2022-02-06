@@ -92,7 +92,6 @@ int main(int argc, char** argv) {
 			out.put(buffer);
 		}
 	}
-	cout << endl;
 	cout << N << " bits successfully written to " << argv[1] << endl;
 	out.close();
 
