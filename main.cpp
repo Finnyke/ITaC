@@ -75,7 +75,7 @@ int main(int argc, char** argv) {
 	unsigned short cnt = 0;
 	out.write(reinterpret_cast<const char*>(&N), sizeof(N));
 	if (p < 1 && p > 0) {
-		for (long long i = 0; i < N + N % 8; ++i) {
+		for (long long i = 0; i < N + 8 - N % 8; ++i) {
 			double r = round(((double)rand() / (RAND_MAX)) - 0.5 + p);
 			++cnt;
 			if (r) buffer |= (1 << (8 - cnt));
