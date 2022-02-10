@@ -11,7 +11,7 @@ char* extractBitsToChar(long long* amount, const char* filename) {
 	}
 	cout << "Extracting bits... ";
 	long long N = 0;
-	char num[8]{0};
+	char num[8]{ 0 };
 	in.read(num, 8 * sizeof(char));
 	for (int i = 7; i >= 0; --i) {
 		long long temp = 0;
@@ -71,22 +71,23 @@ int main(int argc, char** argv) {
 	else p = 0.5;
 	cout << "Writing... ";
 	srand(static_cast<unsigned>(time(nullptr)));
-	unsigned char buffer = 0b00000000;
-	unsigned short cnt = 0;
 	out.write(reinterpret_cast<const char*>(&N), sizeof(N));
 	if (p < 1 && p > 0) {
+		unsigned char buffer = 0b00000000;
+		unsigned short cnt = 0b10000000;
 		for (long long i = 0; i < N + 8 - N % 8; ++i) {
 			double r = round(((double)rand() / (RAND_MAX)) - 0.5 + p);
-			++cnt;
-			if (r) buffer |= (1 << (8 - cnt));
-			if (cnt == 8) {
-				cnt = 0;
+			if (r) buffer |= cnt;
+			cnt >>= 1;
+			if (!cnt) {
+				cnt = 0b10000000;
 				out.put(buffer);
 				buffer = 0b00000000;
 			}
 		}
 	}
 	else {
+		unsigned char buffer;
 		p ? buffer = 0b11111111 : buffer = 0b00000000;
 		for (long long i = 0; i < N / 8 + 1; ++i) {
 			out.put(buffer);
