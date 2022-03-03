@@ -109,5 +109,6 @@ int main(int argc, char** argv) {
 	cout << "Encoding completed successfully" << endl;
 	in.close();
 	out.close();
+	
 	return 0;
 }
