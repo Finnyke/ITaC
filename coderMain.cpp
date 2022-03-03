@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
 		long long output;
 		unsigned long long cnt;
 		char buffer[7]{ 0 };
-		char c;
+		unsigned char c;
 		char* bits = new char[4];
 		for (auto i = 0ll; i < (N / 8 + 1) / 4; ++i) {
 			output = 0;
