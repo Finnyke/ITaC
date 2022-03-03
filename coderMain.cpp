@@ -5,47 +5,6 @@
 
 using namespace std;
 
-char* extractBitsToChar(long long* amount, const char* filename) {
-	ifstream in(filename, ios::binary);
-	if (!in.is_open()) {
-		cerr << "File " << filename << " could not have been opened" << endl;
-		return nullptr;
-	}
-	cout << "Extracting bits... ";
-	long long N = 0;
-	char num[8]{ 0 };
-	in.read(num, 8 * sizeof(char));
-	for (int i = 7; i >= 0; --i) {
-		long long temp = 0;
-		temp |= static_cast<unsigned char>(num[i]);
-		temp <<= i * 8;
-		N |= temp;
-	}
-	char* bits = new char[N];
-	char* buffer = new char[N / 8 + 1];
-	long cnt = 0;
-	in.read(buffer, (N / 8 + 1) * sizeof(char));
-	for (long long i = 0; i < N / 8; ++i) {
-		unsigned char c = static_cast<unsigned char>(buffer[i]);
-		for (long long j = 0; j < 8; ++j) {
-			if (c & 0b10000000) bits[i * 8 + j] = '1';
-			else bits[i * 8 + j] = '0';
-			c = c << 1;
-		}
-	}
-	unsigned char c = static_cast<unsigned char>(buffer[N / 8]);
-	for (long long j = 0; j < N % 8; ++j) {
-		if (c & 0b10000000) bits[N - N % 8 + j] = '1';
-		else bits[N - N % 8 + j] = '0';
-		c = c << 1;
-	}
-	cout << N << " bits successfully extracted" << endl;
-	if (amount) *amount = N;
-	in.close();
-	delete[] buffer;
-	return bits;
-}
-
 int main(int argc, char** argv) {
 	if (argc != 3) {
 		cerr << "Invalid argument amount" << endl;
