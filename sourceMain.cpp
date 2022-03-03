@@ -28,6 +28,7 @@ int main(int argc, char** argv) {
 		temp <<= i * 8;
 		N |= temp;
 	}
+	out.write(reinterpret_cast<const char*>(&N), sizeof(N));
 	cout << "Encoding... ";
 	{
 		long long output;
