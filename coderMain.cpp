@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
-#include <immintrin.h>
 
 using namespace std;
 
@@ -10,13 +9,17 @@ int main(int argc, char** argv) {
 		cerr << "Invalid argument amount" << endl;
 		return 1;
 	}
+	ifstream in(argv[1], ios::binary);
+	if (!in.is_open()) {
+		cerr << "File" << argv[1] << " could not have been opened" << endl;
+		return 1;
+	}
 	ofstream out(argv[2], ios::binary);
 	if (!out.is_open()) {
 		cerr << "File" << argv[2] << " could not have been opened" << endl;
 		return 1;
 	}
 	long long N = 0;
-	ifstream in(argv[1], ios::binary);
 	char num[8]{ 0 };
 	in.read(num, 8 * sizeof(char));
 	for (int i = 7; i >= 0; --i) {
@@ -25,16 +28,19 @@ int main(int argc, char** argv) {
 		temp <<= i * 8;
 		N |= temp;
 	}
-	for (long long i = 0; i < N / 56 + 1; ++i) {
-		if (i == N / 56) {
-			long long left = (N % 56) / 8 + 1;
-			unsigned char* buffer = new unsigned char[left]{ 0 };
-			char* bits = new char[left]{ 0 };
-			in.read(bits, left);
-			unsigned char c = 0b00000000;
-			unsigned char temp = 0b00000000;
-			unsigned short cnt = 0b10000000;
-			for (auto j = 0u; j < left; ++j) {
+	out.write(reinterpret_cast<const char*>(&N), sizeof(N));
+	cout << "Encoding... ";
+	{
+		long long output;
+		unsigned long long cnt;
+		char buffer[7]{ 0 };
+		char c;
+		char* bits = new char[4];
+		for (auto i = 0ll; i < (N / 8 + 1) / 4; ++i) {
+			output = 0;
+			cnt = 0x8000000000000000;
+			in.read(bits, 4);
+			for (auto j = 0u; j < 4; ++j) {
 				c = static_cast<unsigned char>(bits[j]);
 				for (auto k = 0u; k < 4; ++k) {
 					if (c & 0b10000000) buffer[k] = 1;
@@ -44,13 +50,9 @@ int main(int argc, char** argv) {
 				buffer[4] = buffer[0] ^ buffer[1] ^ buffer[2];
 				buffer[5] = buffer[1] ^ buffer[2] ^ buffer[3];
 				buffer[6] = buffer[0] ^ buffer[2] ^ buffer[3];
-				for (auto k = 0u; k < 7; ++k) {
-					if (buffer[k]) temp |= cnt;
-					cnt >>= 1;
+				for (auto k = 0u; k < 7; ++k, cnt >>= 1) {
+					if (buffer[k]) output |= cnt;
 				}
-				out.put(temp);
-				cnt = 0b10000000;
-				temp = 0b00000000;
 				for (auto k = 0u; k < 4; ++k) {
 					if (c & 0b10000000) buffer[k] = 1;
 					else buffer[k] = 0;
@@ -59,23 +61,20 @@ int main(int argc, char** argv) {
 				buffer[4] = buffer[0] ^ buffer[1] ^ buffer[2];
 				buffer[5] = buffer[1] ^ buffer[2] ^ buffer[3];
 				buffer[6] = buffer[0] ^ buffer[2] ^ buffer[3];
-				for (auto k = 0u; k < 7; ++k) {
-					if (buffer[k]) temp |= cnt;
-					cnt >>= 1;
+				for (auto k = 0u; k < 7; ++k, cnt >>= 1) {
+					if (buffer[k]) output |= cnt;
 				}
-				out.put(temp);
-				cnt = 0b10000000;
-				temp = 0b00000000;
+			}
+			const char* buf = reinterpret_cast<const char*>(&output);
+			for (auto j = 7u; j > 0; --j) {
+				out.put(buf[j]);
 			}
 		}
-		else {
-			unsigned char buffer[8]{ 0 };
-			char bits[8]{ 0 };
-			in.read(bits, 8);
-			unsigned char c = 0b00000000;
-			unsigned char temp = 0b00000000;
-			unsigned short cnt = 0b10000000;
-			for (auto j = 0u; j < 8; ++j) {
+		if ((N / 8 + 1) % 4 > 0) {
+			output = 0;
+			cnt = 0x8000000000000000;
+			in.read(bits, (N / 8 + 1) % 4);
+			for (auto j = 0u; j < (N / 8 + 1) % 4; ++j) {
 				c = static_cast<unsigned char>(bits[j]);
 				for (auto k = 0u; k < 4; ++k) {
 					if (c & 0b10000000) buffer[k] = 1;
@@ -85,13 +84,9 @@ int main(int argc, char** argv) {
 				buffer[4] = buffer[0] ^ buffer[1] ^ buffer[2];
 				buffer[5] = buffer[1] ^ buffer[2] ^ buffer[3];
 				buffer[6] = buffer[0] ^ buffer[2] ^ buffer[3];
-				for (auto k = 0u; k < 7; ++k) {
-					if (buffer[k]) temp |= cnt;
-					cnt >>= 1;
+				for (auto k = 0u; k < 7; ++k, cnt >>= 1) {
+					if (buffer[k]) output |= cnt;
 				}
-				out.put(temp);
-				cnt = 0b10000000;
-				temp = 0b00000000;
 				for (auto k = 0u; k < 4; ++k) {
 					if (c & 0b10000000) buffer[k] = 1;
 					else buffer[k] = 0;
@@ -100,24 +95,19 @@ int main(int argc, char** argv) {
 				buffer[4] = buffer[0] ^ buffer[1] ^ buffer[2];
 				buffer[5] = buffer[1] ^ buffer[2] ^ buffer[3];
 				buffer[6] = buffer[0] ^ buffer[2] ^ buffer[3];
-				for (auto k = 0u; k < 7; ++k) {
-					if (buffer[k]) temp |= cnt;
-					cnt >>= 1;
+				for (auto k = 0u; k < 7; ++k, cnt >>= 1) {
+					if (buffer[k]) output |= cnt;
 				}
-				out.put(temp);
-				cnt = 0b10000000;
-				temp = 0b00000000;
+			}
+			const char* buf = reinterpret_cast<const char*>(&output);
+			for (auto j = 7u; j > 0; --j) {
+				out.put(buf[j]);
 			}
 		}
+		delete[] bits;
 	}
-	cout << N << " bits successfully encoded and written to " << argv[1] << endl;
-	out.close();
+	cout << "Encoding completed successfully" << endl;
 	in.close();
-
-	char* bitties = extractBitsToChar(nullptr, argv[2]);
-	for (auto i = 0; i < N; ++i) {
-		cout << bitties[i];
-	}
-	cout << endl;
+	out.close();
 	return 0;
 }
