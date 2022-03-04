@@ -55,5 +55,6 @@ int main(int argc, char** argv) {
 	cout << N << " bits successfully written to " << argv[1] << endl;
 	out.close();
 
+	cin.get();
 	return 0;
 }
