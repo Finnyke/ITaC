@@ -7,17 +7,20 @@ using namespace std;
 int main(int argc, char** argv) {
 	if (argc != 3 && argc != 4) {
 		cerr << "Invalid argument amount" << endl;
+		cin.get();
 		return 1;
 	}
 	ofstream out(argv[1], ios::binary);
 	if (!out.is_open()) {
 		cerr << "File" << argv[1] << " could not have been opened" << endl;
+		cin.get();
 		return 1;
 	}
 	long long N;
 	N = atoll(argv[2]);
 	if (N <= 0) {
 		cerr << "Invalid number of bits" << endl;
+		cin.get();
 		return 1;
 	}
 	double p;
@@ -25,6 +28,7 @@ int main(int argc, char** argv) {
 		p = atof(argv[3]);
 		if (p < 0 || p > 1) {
 			cerr << "Invalid probability" << endl;
+			cin.get();
 			return 1;
 		}
 	}
