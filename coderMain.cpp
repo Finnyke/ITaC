@@ -7,16 +7,19 @@ using namespace std;
 int main(int argc, char** argv) {
 	if (argc != 3) {
 		cerr << "Invalid argument amount" << endl;
+		cin.get();
 		return 1;
 	}
 	ifstream in(argv[1], ios::binary);
 	if (!in.is_open()) {
 		cerr << "File" << argv[1] << " could not have been opened" << endl;
+		cin.get();
 		return 1;
 	}
 	ofstream out(argv[2], ios::binary);
 	if (!out.is_open()) {
 		cerr << "File" << argv[2] << " could not have been opened" << endl;
+		cin.get();
 		return 1;
 	}
 	long long* N = 0;
