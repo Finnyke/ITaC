@@ -110,5 +110,6 @@ int main(int argc, char** argv) {
 	in.close();
 	out.close();
 	
+	cin.get();
 	return 0;
 }
