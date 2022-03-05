@@ -7,6 +7,7 @@ using namespace std;
 int main(int argc, char** argv) {
 	if (argc != 3 && argc != 4) {
 		cerr << "Invalid argument amount" << endl;
+		cin.get();
 		return 1;
 	}
 	ifstream in(argv[1], ios::binary);
