@@ -12,7 +12,7 @@ int main(int argc, char** argv) {
 	}
 	ofstream out(argv[1], ios::binary);
 	if (!out.is_open()) {
-		cerr << "File" << argv[1] << " could not have been opened" << endl;
+		cerr << "File " << argv[1] << " could not have been opened" << endl;
 		cin.get();
 		return 1;
 	}
