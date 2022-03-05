@@ -60,7 +60,7 @@ int main(int argc, char** argv) {
 			out.put(buffer[j]);
 		}
 	}
-	cout << *N << "bits processed successfully" << endl;
+	cout << *N << " bits processed successfully" << endl;
 	in.close();
 	out.close();
 
