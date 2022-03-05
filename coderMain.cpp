@@ -33,7 +33,7 @@ int main(int argc, char** argv) {
 		unsigned long long cnt;
 		char buffer[7]{ 0 };
 		unsigned char c;
-		char* bits = new char[4];
+		char bits[4]{ 0 };
 		for (auto i = 0ll; i < (*N / 8 + 1) / 4; ++i) {
 			output = 0;
 			cnt = 0x8000000000000000;
@@ -48,8 +48,9 @@ int main(int argc, char** argv) {
 				buffer[4] = buffer[0] ^ buffer[1] ^ buffer[2];
 				buffer[5] = buffer[1] ^ buffer[2] ^ buffer[3];
 				buffer[6] = buffer[0] ^ buffer[2] ^ buffer[3];
-				for (auto k = 0u; k < 7; ++k, cnt >>= 1) {
+				for (auto k = 0u; k < 7; ++k) {
 					if (buffer[k]) output |= cnt;
+					cnt >>= 1;
 				}
 				for (auto k = 0u; k < 4; ++k) {
 					if (c & 0b10000000) buffer[k] = 1;
@@ -59,8 +60,9 @@ int main(int argc, char** argv) {
 				buffer[4] = buffer[0] ^ buffer[1] ^ buffer[2];
 				buffer[5] = buffer[1] ^ buffer[2] ^ buffer[3];
 				buffer[6] = buffer[0] ^ buffer[2] ^ buffer[3];
-				for (auto k = 0u; k < 7; ++k, cnt >>= 1) {
+				for (auto k = 0u; k < 7; ++k) {
 					if (buffer[k]) output |= cnt;
+					cnt >>= 1;
 				}
 			}
 			const char* buf = reinterpret_cast<const char*>(&output);
@@ -82,8 +84,9 @@ int main(int argc, char** argv) {
 				buffer[4] = buffer[0] ^ buffer[1] ^ buffer[2];
 				buffer[5] = buffer[1] ^ buffer[2] ^ buffer[3];
 				buffer[6] = buffer[0] ^ buffer[2] ^ buffer[3];
-				for (auto k = 0u; k < 7; ++k, cnt >>= 1) {
+				for (auto k = 0u; k < 7; ++k) {
 					if (buffer[k]) output |= cnt;
+					cnt >>= 1;
 				}
 				for (auto k = 0u; k < 4; ++k) {
 					if (c & 0b10000000) buffer[k] = 1;
@@ -93,8 +96,9 @@ int main(int argc, char** argv) {
 				buffer[4] = buffer[0] ^ buffer[1] ^ buffer[2];
 				buffer[5] = buffer[1] ^ buffer[2] ^ buffer[3];
 				buffer[6] = buffer[0] ^ buffer[2] ^ buffer[3];
-				for (auto k = 0u; k < 7; ++k, cnt >>= 1) {
+				for (auto k = 0u; k < 7; ++k) {
 					if (buffer[k]) output |= cnt;
+					cnt >>= 1;
 				}
 			}
 			const char* buf = reinterpret_cast<const char*>(&output);
@@ -102,7 +106,6 @@ int main(int argc, char** argv) {
 				out.put(buf[j]);
 			}
 		}
-		delete[] bits;
 	}
 	cout << "Encoding completed successfully" << endl;
 	in.close();
