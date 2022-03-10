@@ -41,11 +41,6 @@ int main(int argc, char** argv) {
 		unsigned char syndrome;
 		for (auto i = 0ll; i < byteAmount / 7; ++i) {
 			in.read(buffer, 7);
-			for (auto j = 0u; j < 3; ++j) {
-				auto temp = buffer[j];
-				buffer[j] = buffer[6 - j];
-				buffer[6 - j] = temp;
-			}
 			inputptr = reinterpret_cast<long long*>(buffer);
 			input = *inputptr;
 			for (auto j = 0u; j < 4; ++j) {
@@ -124,15 +119,11 @@ int main(int argc, char** argv) {
 		}
 		if (byteAmount % 7) {
 			auto left = byteAmount % 7;
+			mask >>= (7 - left) * 8;
 			in.read(buffer, left);
-			for (auto j = 0u; j < 3; ++j) {
-				auto temp = buffer[j];
-				buffer[j] = buffer[6 - j];
-				buffer[6 - j] = temp;
-			}
 			inputptr = reinterpret_cast<long long*>(buffer);
 			input = *inputptr;
-			for (auto j = 0u; j < left * 4 / 7 + 1; ++j) {
+			for (auto j = 0u; j < left * 4 / 7; ++j) {
 				c = 0;
 				syndrome = 0;
 				for (auto k = 0u; k < 7; ++k) {
@@ -202,7 +193,7 @@ int main(int argc, char** argv) {
 				}
 				carr[j] = c;
 			}
-			for (auto j = 0u; j < left * 4 / 7 + 1; ++j) {
+			for (auto j = 0u; j < left * 4 / 7; ++j) {
 				out.put(carr[j]);
 			}
 		}
