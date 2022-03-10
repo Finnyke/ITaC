@@ -54,7 +54,12 @@ int main(int argc, char** argv) {
 				if (bufferSource[j] != bufferDecoder[j]) {
 					for (unsigned char mask = 0b10000000, cnt = 0; cnt < 8; ++cnt) {
 						if ((mask & bufferSource[j]) !=  (mask & bufferDecoder[j])) {
-							cout << "Error at position " << *N / 16 * 8 + j * 8 + cnt << '\n';
+							auto pos = (*N / 8 + 1) / 16 * 8 + j * 8 + cnt;
+							if (pos >= *N) {
+								mask >>= 1;
+								continue;
+							}
+							cout << "Error at position " << pos << '\n';
 							++errCount;
 						}
 						mask >>= 1;
