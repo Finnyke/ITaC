@@ -66,15 +66,16 @@ int main(int argc, char** argv) {
 				}
 			}
 			const char* buf = reinterpret_cast<const char*>(&output);
-			for (auto j = 7u; j > 0; --j) {
+			for (auto j = 1u; j < 8; ++j) {
 				out.put(buf[j]);
 			}
 		}
-		if ((*N / 8 + 1) % 4 > 0) {
+		if ((*N / 8 + 1) % 4) {
+			auto left = (*N / 8 + 1) % 4;
 			output = 0;
 			cnt = 0x8000000000000000;
-			in.read(bits, (*N / 8 + 1) % 4);
-			for (auto j = 0u; j < (*N / 8 + 1) % 4; ++j) {
+			in.read(bits, left);
+			for (auto j = 0u; j < left; ++j) {
 				c = static_cast<unsigned char>(bits[j]);
 				for (auto k = 0u; k < 4; ++k) {
 					if (c & 0b10000000) buffer[k] = 1;
@@ -102,7 +103,7 @@ int main(int argc, char** argv) {
 				}
 			}
 			const char* buf = reinterpret_cast<const char*>(&output);
-			for (auto j = 7u; j > 0; --j) {
+			for (auto j = (8 - 2 * left); j < 8; ++j) {
 				out.put(buf[j]);
 			}
 		}
