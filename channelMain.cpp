@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
 			return 1;
 		}
 	}
-	else p = 0.0001;
+	else p = 0;
 	long long* N = 0;
 	char num[8]{ 0 };
 	in.read(num, 8 * sizeof(char));
@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
 	for (auto i = 0ll; i < byteAmount / 16; ++i) {
 		in.read(buffer, 16);
 		for (auto j = 0u; j < 16 * 8; ++j) {
-			if (rand() < RAND_MAX * p) buffer[j / 16] ^= (c >> (j % 8));
+			if (rand() < RAND_MAX * p) buffer[j / 8] ^= (c >> (j % 8));
 		}
 		for (auto j = 0u; j < 16; ++j) {
 			out.put(buffer[j]);
@@ -55,7 +55,7 @@ int main(int argc, char** argv) {
 	if (byteAmount % 16) {
 		in.read(buffer, byteAmount % 16);
 		for (auto j = 0u; j < (byteAmount % 16) * 8; ++j) {
-			if (rand() < RAND_MAX * p) buffer[j / 16] ^= (c >> (j % 8));
+			if (rand() < RAND_MAX * p) buffer[j / 8] ^= (c >> (j % 8));
 		}
 		for (auto j = 0u; j < byteAmount % 16; ++j) {
 			out.put(buffer[j]);
